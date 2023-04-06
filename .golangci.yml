@@ -1,0 +1,27 @@
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - exportloopref # replacement of scopelint
+    - revive # replacement of golint
+linters-settings:
+  govet:
+    check-unreachable: true
+    check-rangeloops: true
+    check-copylocks: true
+  revive:
+    rules:
+      - name: exported
+issues:
+  include:
+    - EXC0012
+    - EXC0014

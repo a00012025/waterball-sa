@@ -19,11 +19,13 @@ func (p *humanPlayer) ChooseName() {
 func (p *humanPlayer) TakeTurn(round int) *card.Card {
 	if p.exchangeCard != nil && p.exchangeCard.UntilRound == round {
 		// needs to exchange back
+		fmt.Printf("Exchanging back the cards with %s\n", p.exchangeCard.Opponent.Name())
 		p.ExchangeBack()
 	}
 
 	if (p.cards == nil) || (len(p.cards) == 0) {
 		// no cards to play
+		fmt.Printf("No cards to play\n")
 		return nil
 	}
 

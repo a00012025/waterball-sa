@@ -24,6 +24,7 @@ func (p *aiPlayer) TakeTurn(round int) *card.Card {
 
 	if (p.cards == nil) || (len(p.cards) == 0) {
 		// no cards to play
+		fmt.Printf("No cards to play\n")
 		return nil
 	}
 

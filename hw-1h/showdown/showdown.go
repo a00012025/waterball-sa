@@ -11,7 +11,7 @@ import (
 // Showdown represents the game
 type Showdown struct {
 	deck    deck.IDeck
-	players []GamePlayer
+	players []*GamePlayer
 }
 
 // NewShowdown returns a new Showdown game
@@ -20,9 +20,9 @@ func NewShowdown(players []player.IPlayer) Showdown {
 		panic("Showdown game requires 4 players")
 	}
 
-	gamePlayers := []GamePlayer{}
+	gamePlayers := []*GamePlayer{}
 	for _, p := range players {
-		gamePlayers = append(gamePlayers, GamePlayer{
+		gamePlayers = append(gamePlayers, &GamePlayer{
 			UseExchangeHands: false,
 			Player:           p,
 		})
@@ -56,11 +56,12 @@ func (s *Showdown) Play() {
 	}
 
 	// play 13 rounds
-	for i := 0; i < 13; i++ {
-		fmt.Println("=== Round", i+1, "starts ===")
+	for round := 0; round < 13; round++ {
+		fmt.Println("=== Round", round+1, "starts ===")
 
 		// all players play and record winner
 		winnedPlayer := -1
+		playedCards := []*card.Card{}
 		var winnedCard *card.Card
 		for i, p := range s.players {
 			fmt.Printf("Player %d playing...\n", i)
@@ -73,21 +74,23 @@ func (s *Showdown) Play() {
 					fmt.Printf("Player %d used exchange hands ability with Player %d!\n", i, target)
 					p.UseExchangeHands = true
 					opponent := s.players[target]
-					p.Player.ExchangeHands(i+3, opponent.Player)
+					p.Player.ExchangeHands(round+4, opponent.Player)
 				}
 			}
 
-			card := p.Player.TakeTurn(i + 1)
+			card := p.Player.TakeTurn(round + 1)
 			fmt.Printf("Player %d played\n", i)
 
 			if card != nil && (winnedCard == nil || card.Compare(winnedCard) > 0) {
 				winnedPlayer = i
 				winnedCard = card
 			}
+			playedCards = append(playedCards, card)
 		}
 
 		// print winner and add points
 		fmt.Println("Player", winnedPlayer, "wins the round!")
+		fmt.Printf("All played cards: %v\n", playedCards)
 		s.players[winnedPlayer].Player.AddPoint()
 	}
 
@@ -98,5 +101,6 @@ func (s *Showdown) Play() {
 			winner = i
 		}
 	}
-	fmt.Println("Player", winner, "wins the game!")
+	winnedPlayer := s.players[winner].Player
+	fmt.Printf("Player %s wins the game with %d points!\n", winnedPlayer.Name(), winnedPlayer.GetPoint())
 }
